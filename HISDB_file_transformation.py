@@ -2,12 +2,16 @@ import csv
 import os
 import re
 from datetime import datetime
+import json
 
-# Input HISDB file
-input_file = 'HD.FAM1001.FAM295.VENTURA.HISDB.D250404'   # Example filename
+# Load config.json
+with open("config.json", "r") as f:
+    config = json.load(f)
 
-# Output CSV
-output_csv = 'hisdb_extracted_output.csv'
+# Use config values
+input_file = config["input_file"]
+output_csv = config["hisdb_output_csv"]
+
 
 # Define headers
 headers = [
@@ -19,7 +23,7 @@ headers = [
 ]
 
 # --- Extract File Type and File Date ---
-file_type = "DA"
+file_type = config["file_type"]
 
 # Extract date pattern starting with 'D' followed by 6 digits
 match = re.search(r'\.D(\d{6})$', input_file)
@@ -36,16 +40,48 @@ with open(output_csv, 'w', newline='') as out_file:
     with open(input_file, 'r') as file:
         for record in file:
             if len(record.strip()) == 0:
-                continue  # Skip empty lines
+                continue 
 
             # Beneficiary Info
-            medicaid_id = record[0:9].strip()
-            num_segments = int(record[9:11].strip())
+            medicaid_id_raw = record[0:9].strip()
+            # Skip if medicaid_id contains non-ASCII or is corrupt
+            try:
+                medicaid_id = medicaid_id_raw.encode('latin1').decode('ascii').strip()
+            except UnicodeDecodeError:
+                continue
+                    
+            try:
+                num_segments = int(record[9:11].strip())
+            except ValueError:
+                continue 
+
             meds_current_ym = record[73:79].strip()
 
             # Insurance Segments
             segment_start = 83
             segment_length = 511
+            
+            if num_segments == 0:
+                    writer.writerow({
+                        'Medicaid ID': medicaid_id,
+                        'Carrier Code(s)': '',
+                        'Policy Number(s)': '',
+                        'Scope of Coverage': '',
+                        'Policy Start Date(s)': '',
+                        'Policy End Date(s)': '',
+                        'Last Change Date(s)': '',
+                        'County ID': '',
+                        'MEDS Current Year/Month (CCYYMM)': meds_current_ym,
+                        'Segment Type': '',
+                        'Source of Change': '',
+                        'Transaction Type': '',
+                        'Insurance Status Code': '',
+                        'Termination Reason': '',
+                        'File Type': file_type,
+                        'File Date': file_date
+                    })
+                    continue
+
 
             for seg_num in range(num_segments):
                 start = segment_start + (seg_num * segment_length)

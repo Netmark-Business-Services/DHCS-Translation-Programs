@@ -1,13 +1,19 @@
 import os
 import zipfile
 import pandas as pd
+import json
 
-# --- CONFIGURATION ---
-zip_path = "DHCS834-DA-20250404-GoldCoastHealthPlan-001.dat 1.ZIP"
-output_csv = "Final_Merged_Output.csv"
-output_pipe = "Final_Merged_Output_PipeDelimited.dat"
-cleaned_pipe_file = "Final_Output_PipeDelimited_Cleaned.dat"
-extract_dir = "unzipped_input"
+# Load config.json
+with open("config.json", "r") as f:
+    config = json.load(f)
+
+# Use config values
+zip_path = config["zip_path"]
+extract_dir = config["extract_dir"]
+output_csv = config["834x12_output_csv"]
+output_pipe = config["output_pipe"]
+cleaned_pipe_file = config["cleaned_pipe_file"]
+
 
 # --- UNZIP FILE ---
 os.makedirs(extract_dir, exist_ok=True)
@@ -274,7 +280,6 @@ for segment in segments:
 
     elif tag == "HD":
         pending_hd = {"HCP Status": parts[1]}
-        #print(f"[DEBUG] New HD block started: {parts}")
         if len(parts) > 4:
             hcp = parts[4].split(";")
             pending_hd["HCP Code"] = hcp[0]

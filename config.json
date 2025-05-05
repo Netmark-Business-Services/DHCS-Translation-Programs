@@ -1,0 +1,12 @@
+{
+    "zip_path": "DHCS834-DA-20250404-GoldCoastHealthPlan-001.dat 1.ZIP",
+    "extract_dir": "unzipped_input",
+    "834x12_output_csv": "Final_Merged_Output.csv",
+    "output_pipe": "Final_Merged_Output_PipeDelimited.dat",
+    "cleaned_pipe_file": "Final_Output_PipeDelimited_Cleaned.dat",
+
+    "input_file": "HD.FAM1001.FAM295.VENTURA.HISDB.D250404",
+    "hisdb_output_csv" : "hisdb_extracted_output.csv",
+    "file_type": "DA"
+  }
+  
