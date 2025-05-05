@@ -7,6 +7,9 @@
 
     "input_file": "HD.FAM1001.FAM295.VENTURA.HISDB.D250404",
     "hisdb_output_csv" : "hisdb_extracted_output.csv",
-    "file_type": "DA"
+    "file_type": "DA",
+
+    "carrier_input_file" : "HD.FAM1001.FAM296.VENTURA.CARRIER.D2501",
+    "carrier_output_file" : "carrier_output.txt"
   }
   
